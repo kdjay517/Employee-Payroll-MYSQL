@@ -1,0 +1,297 @@
+
+
+--------UC 1----------
+
+
+mysql> use employee_payroll_service;
+mysql> show tables
+    -> ;
++------------------------------------+
+| Tables_in_employee_payroll_service |
++------------------------------------+
+| employee_payroll                   |
++------------------------------------+
+1 row in set (0.02 sec)
+
+mysql> describe employee_payroll;
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| EmployeeID   | int unsigned | NO   | PRI | NULL    | auto_increment |
+| EmployeeName | varchar(255) | NO   |     | NULL    |                |
+| Salary       | double       | NO   |     | NULL    |                |
+| Start        | date         | NO   |     | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.01 sec)
+
+---------------UC 5 -----------
+
+mysql> select salary from employee_payroll where employeename = "jhon";
++--------+
+| salary |
++--------+
+|  30000 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> select salary from employee_payroll where start between cast('2010-02-19'as date) and date(now());
++--------+
+| salary |
++--------+
+|  30000 |
+|  45000 |
+|  35000 |
++--------+
+3 rows in set (0.01 sec)
+
+mysql> select salary from employee_payroll where start between cast('2014-02-19'as date) and date(now());
++--------+
+| salary |
++--------+
+|  30000 |
+|  35000 |
++--------+
+2 rows in set (0.00 sec)
+
+
+----------- UC 6 -------
+
+mysql> update employee_payroll set gender = 'M' where employeename = 'jhon';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update employee_payroll set gender = 'M' where employeename = 'hello';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update employee_payroll set gender = 'F' where employeename = 'uma';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select* from employee_payroll;
++------------+--------------+--------+--------+------------+
+| EmployeeID | EmployeeName | Gender | Salary | Start      |
++------------+--------------+--------+--------+------------+
+|          1 | Jhon         | M      |  30000 | 2018-02-19 |
+|          2 | Hello        | M      |  45000 | 2010-02-19 |
+|          3 | Uma          | F      |  35000 | 2015-02-19 |
++------------+--------------+--------+--------+------------+
+3 rows in set (0.00 sec)
+
+
+-------------- UC 7 ------------
+
+
+mysql> SELECT SUM(salary) FROM employee_payroll
+    -> WHERE gender = 'F' GROUP BY gender;
++-------------+
+| SUM(salary) |
++-------------+
+|       35000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select sum(salary) from employee_payroll where Gender ='m' group by gender;
++-------------+
+| sum(salary) |
++-------------+
+|       75000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select count(salary) from employee_payroll where Gender ='m' group by gender;
++---------------+
+| count(salary) |
++---------------+
+|             2 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select avg(salary) from employee_payroll where Gender ='m' group by gender;
++-------------+
+| avg(salary) |
++-------------+
+|       37500 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select min(salary) from employee_payroll where Gender ='m' group by gender;
++-------------+
+| min(salary) |
++-------------+
+|       30000 |
++-------------+
+1 row in set (0.00 sec)
+
+------------UC 8--------
+
+
+mysql> alter table employee_payroll add PhoneNumber varchar(10) after employeename;
+Query OK, 0 rows affected (0.18 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll add Address varchar(10) after phonenumber;
+Query OK, 0 rows affected (0.14 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll add Department varchar(10) after address;
+Query OK, 0 rows affected (0.13 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe employee_payroll;
++--------------+--------------+------+-----+----------------+----------------+
+| Field        | Type         | Null | Key | Default        | Extra          |
++--------------+--------------+------+-----+----------------+----------------+
+| EmployeeID   | int unsigned | NO   | PRI | NULL           | auto_increment |
+| EmployeeName | varchar(255) | NO   |     | NULL           |                |
+| PhoneNumber  | varchar(10)  | YES  |     | NULL           |                |
+| Address      | varchar(20)  | YES  |     | Andhra Pradesh |                |
+| department   | varchar(20)  | NO   |     | NULL           |                |
+| Gender       | varchar(2)   | YES  |     | NULL           |                |
+| Salary       | double       | NO   |     | NULL           |                |
+| Start        | date         | NO   |     | NULL           |                |
++--------------+--------------+------+-----+----------------+----------------+
+8 rows in set (0.01 sec)
+
+---------UC 9-------------
+
+mysql> alter table employee_payroll rename column department to Department;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll rename column salary to BasicPay;
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll add Deduction float after basicpay;
+Query OK, 0 rows affected (0.16 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll add TaxablePay float after deduction;
+Query OK, 0 rows affected (0.16 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll add Tax float after TaxablePay;
+Query OK, 0 rows affected (0.13 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table employee_payroll add NetPay float after Tax;
+Query OK, 0 rows affected (0.12 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select* from employee_payroll;
++------------+--------------+-------------+-------------+------------+--------+----------+-----------+------------+------+--------+------------+
+| EmployeeID | EmployeeName | PhoneNumber | Address     | Department | Gender | BasicPay | Deduction | TaxablePay | Tax  | NetPay | Start      |
++------------+--------------+-------------+-------------+------------+--------+----------+-----------+------------+------+--------+------------+
+|          1 | Jhon         | 8978041840  | anatapur    | ece        | M      |    30000 |      NULL |       NULL | NULL |   NULL | 2018-02-19 |
+|          2 | Hello        | 9966647923  | puttaparthi | eee        | M      |    45000 |      NULL |       NULL | NULL |   NULL | 2010-02-19 |
+|          3 | Uma          | 6301544505  | puttur      | cse        | F      |    35000 |      NULL |       NULL | NULL |   NULL | 2015-02-19 |
++------------+--------------+-------------+-------------+------------+--------+----------+-----------+------------+------+--------+------------+
+3 rows in set (0.00 sec)
+
+--------UC 10 ------
+insert into employee_payroll (EmployeeID,EmployeeName,PhoneNumber,Address,Department,Gender,BasicPay, Deduction,TaxablePay,Tax,NetPay,Start) values (1,'Dhanunjaya','8978041840','puttaparthi','ece','M',20000,2000,1000,200,18000,'2021-01-22');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select* from employee_payroll;
++------------+--------------+-------------+-------------+------------+--------+----------+-----------+------------+------+--------+------------+
+| EmployeeID | EmployeeName | PhoneNumber | Address     | Department | Gender | BasicPay | Deduction | TaxablePay | Tax  | NetPay | Start      |
++------------+--------------+-------------+-------------+------------+--------+----------+-----------+------------+------+--------+------------+
+|          1 | Dhanunjaya   | 8978041840  | puttaparthi | ece        | M      |    20000 |      2000 |       1000 |  200 |  18000 | 2021-01-22 |
++------------+--------------+-------------+-------------+------------+--------+----------+-----------+------------+------+--------+------------+
+1 row in set (0.00 sec)
+
+
+--------UC 11 -----------
+
+
+mysql> create table  EmployeeDepartment(Department varchar(20) NOT NULL, PRIMARY KEY(Department));
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> insert into  EmployeeDepartment (department) values ('Sales'),('Marketing');
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select* from  EmployeeDepartment;
++------------+
+| Department |
++------------+
+| Marketing  |
+| Sales      |
++------------+
+2 rows in set (0.00 sec)
+
+-------UC 12-------
+
+
+mysql> create table company (company_id int NOT NULL, company_name varchar(20), primary key(company_id));
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> describe company;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| company_id   | int         | NO   | PRI | NULL    |       |
+| company_name | varchar(20) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+2 rows in set (0.02 sec)
+
+mysql> insert into company values(1, 'Apple'),(2, 'Samsung'),(3, 'TaTa'),(4, 'Nokia');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select* from company;
++------------+--------------+
+| company_id | company_name |
++------------+--------------+
+|          1 | Apple        |
+|          2 | Samsung      |
+|          3 | TaTa         |
+|          4 | Nokia        |
++------------+--------------+
+4 rows in set (0.00 sec)
+
+
+mysql> create table employee(EmpID int NOT NULL,EmpName varchar(30),Address varchar(20),PhoneNumber BIGINT(15),Gender char(1),primary key(EmpID),company_id int NOT NULL, FOREIGN KEY(company_id) REFERENCES company(company_id));
+Query OK, 0 rows affected, 1 warning (0.09 sec)
+
+mysql> describe employee;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| EmpID       | int         | NO   | PRI | NULL    |       |
+| EmpName     | varchar(30) | YES  |     | NULL    |       |
+| Address     | varchar(20) | YES  |     | NULL    |       |
+| PhoneNumber | bigint      | YES  |     | NULL    |       |
+| Gender      | char(1)     | YES  |     | NULL    |       |
+| company_id  | int         | NO   | MUL | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+mysql> create table department(EmpID int NOT NULL, Dept_id varchar(10) ,primary key(empid,dept_id), foreign key(empid) references employee(empid));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> describe department;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| EmpID   | int         | NO   | PRI | NULL    |       |
+| Dept_id | varchar(10) | NO   | PRI | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+2 rows in set (0.03 sec)
+
+mysql> create table payroll (EmpID int NOT NULL, BasicPay double,Deductions double, TaxablePay double, Tax double,NetPay double,primary key (empid), foreign key(empid) references employee(empid));
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> describe payroll;
++------------+--------+------+-----+---------+-------+
+| Field      | Type   | Null | Key | Default | Extra |
++------------+--------+------+-----+---------+-------+
+| EmpID      | int    | NO   | PRI | NULL    |       |
+| BasicPay   | double | YES  |     | NULL    |       |
+| Deductions | double | YES  |     | NULL    |       |
+| TaxablePay | double | YES  |     | NULL    |       |
+| Tax        | double | YES  |     | NULL    |       |
+| NetPay     | double | YES  |     | NULL    |       |
++------------+--------+------+-----+---------+-------+
+6 rows in set (0.04 sec)
